@@ -764,8 +764,12 @@ public class HiveMetaStore extends ThriftHiveMetastore {
           JavaUtils.newInstance(JavaUtils.getClass(taskName, MetastoreTaskThread.class));
       task.setConf(conf);
       long freq = task.runFrequency(TimeUnit.MILLISECONDS);
-      LOG.info("Scheduling for " + task.getClass().getCanonicalName() + " service.");
-      ThreadPool.getPool().scheduleAtFixedRate(task, freq, freq, TimeUnit.MILLISECONDS);
+      if (freq > 0) {
+        LOG.info("Scheduling for " + task.getClass().getCanonicalName() + " service.");
+        ThreadPool.getPool().scheduleAtFixedRate(task, freq, freq, TimeUnit.MILLISECONDS);
+      } else {
+        LOG.info("NOT scheduling for " + task.getClass().getCanonicalName() + " service!");
+      }
     }
   }
 

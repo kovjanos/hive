@@ -449,12 +449,14 @@ public class HMSHandler extends FacebookBase implements IHMSHandler {
             JavaUtils.newInstance(JavaUtils.getClass(taskName, MetastoreTaskThread.class));
         task.setConf(conf);
         long freq = task.runFrequency(TimeUnit.MILLISECONDS);
-        LOG.info("Scheduling for " + task.getClass().getCanonicalName() + " service with " +
-            "frequency " + freq + "ms.");
         // For backwards compatibility, since some threads used to be hard coded but only run if
         // frequency was > 0
         if (freq > 0) {
-          ThreadPool.getPool().scheduleAtFixedRate(task, freq, freq, TimeUnit.MILLISECONDS);
+           LOG.info("Scheduling for " + task.getClass().getCanonicalName() + " service with " +
+               "frequency " + freq + "ms.");
+           ThreadPool.getPool().scheduleAtFixedRate(task, freq, freq, TimeUnit.MILLISECONDS);
+        } else {
+           LOG.info("NOT scheduling for " + task.getClass().getCanonicalName() + " service!");
         }
       }
     }
